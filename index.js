@@ -1,24 +1,34 @@
-const express = require('express');
-const cors = require('cors')
-require('dotenv').config();
-
-const { dbConnection } = require('./database/config');
-
+require("dotenv").config();
+const express = require("express");
+const cors = require("cors");
+const morgan = require("morgan");
+const { dbConnection } = require("./src/database/config");
 
 const app = express();
 
-// Cors
-app.use(cors());
+main();
 
-//Conectar la DB
-dbConnection();
+function applyMiddlewares() {
+  app.use(cors());
+  app.use(morgan("tiny"));
+  app.use(express.static("public"));
+  app.use(express.json());
 
-app.use(express.static('public'));
-app.use(express.json());
+  // Routes
+  app.use("/api/providers", require("./src/routes/provider"));
+  app.use("/api/client", require("./src/routes/client"));
+  app.listen(process.env.PORT || 4000, () => {
+    console.log(`Server runnig on port: ${process.env.PORT || 4000}`);
+  });
+}
 
-app.use('/api/providers', require('./src/routes/provider'));
-app.use('/api/client', require('./src/routes/client'));
-
-app.listen(process.env.PORT || 4000, () => {
-    console.log(`Server port ${process.env.PORT}`);
-})
+async function main(params) {
+  try {
+    applyMiddlewares();
+    //Conectar la DB
+    await dbConnection();
+  } catch (error) {
+    console.log("Error starting the server");
+    console.log(error);
+  }
+}

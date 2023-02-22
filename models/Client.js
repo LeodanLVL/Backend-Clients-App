@@ -1,4 +1,5 @@
 const {Schema , model} = require('mongoose')
+
 const Provider = require('./Provider')
 
 const ClientSchema = Schema({
@@ -14,7 +15,7 @@ const ClientSchema = Schema({
     },
     phone:{
         type: String,
-        require: true,
+        required: true,
         unique: true
     },
     providers:[Provider]

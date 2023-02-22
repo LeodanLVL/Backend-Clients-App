@@ -1,30 +1,24 @@
 const express = require('express');
+const cors = require('cors')
 require('dotenv').config();
-const {dbConnection} = require('./database/config');
 
-const corsMiddleware = require('./cors');
+const { dbConnection } = require('./database/config');
 
 
-const app  = express();
+const app = express();
 
 // Cors
-// app.options('*',corsMiddleware);
-// app.use(corsMiddleware);
+app.use(cors());
 
 //Conectar la DB
 dbConnection();
 
 app.use(express.static('public'));
+app.use(express.json());
 
-app.use('/api/clients',require('./routes/clientInfo'));
+app.use('/api/providers', require('./src/routes/provider'));
+app.use('/api/client', require('./src/routes/client'));
 
-// app.get('/',(req , res)=>{
-//     console.log("Dame el /");
-//     res.json({
-//         ok: true
-//     })
-// })
-
-app.listen(process.env.PORT,()=>{
+app.listen(process.env.PORT || 4000, () => {
     console.log(`Server port ${process.env.PORT}`);
 })

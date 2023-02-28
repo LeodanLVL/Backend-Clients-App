@@ -4,6 +4,7 @@ const Provider = require("../models/Provider");
 const getProviders = async (req = request, resp = response) => {
   try {
     const providers = await Provider.find();
+
     return resp.json({
       ok: true,
       data: providers,
@@ -12,7 +13,7 @@ const getProviders = async (req = request, resp = response) => {
     console.log(error);
     resp.status(500).json({
       ok: false,
-      msg: "Contacte al admin",
+      msg: "You have to call an admin",
       error,
     });
   }
@@ -63,7 +64,22 @@ const insertProvider = async (req = request, resp = response) => {
 
 const updateProvider = async (req = request, resp = response) => {
   try {
+
+    const { id } = req.params;
+    const provider = (await Provider.findById(id)) || false;
+    
+    if (!!provider) {
+      const updateP = await Provider.updateOne(provider , req.body);
+      
+    }else{
+      return resp.json({
+        ok: false,
+        data: null,
+        msg: `We could not find an element with this id(${id})`,
+      });
+    }
     return resp.json({ ok: true, msg: "Al validations passed" });
+
   } catch (error) {
     console.log(error);
     resp.status(500).json({
@@ -74,8 +90,17 @@ const updateProvider = async (req = request, resp = response) => {
   }
 };
 
-const deleteProvider = async () => {
+const deleteProvider = async (req ,resp) => {
   try {
+    console.log("Borrando");
+    const { id } = req.params;
+    const provider = (await Provider.findById(id)) || false;
+    if (!!provider) {
+      
+      const updateP = await Provider.deleteOne(provider);
+      console.log("Provider deleted");
+    }
+
     return resp.json({ ok: true, msg: "Al validations passed" });
   } catch (error) {
     console.log(error);

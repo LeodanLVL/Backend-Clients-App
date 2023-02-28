@@ -18,7 +18,10 @@ const ClientSchema = Schema({
         required: true,
         unique: true
     },
-    providers:[Provider]
+    providers:[{_id:{
+        type: String,
+        require:true,
+    }}]
      
 });
 

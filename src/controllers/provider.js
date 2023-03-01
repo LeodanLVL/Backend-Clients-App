@@ -64,22 +64,21 @@ const insertProvider = async (req = request, resp = response) => {
 
 const updateProvider = async (req = request, resp = response) => {
   try {
-
     const { id } = req.params;
     const provider = (await Provider.findById(id)) || false;
-    
-    if (!!provider) {
-      const updateP = await Provider.updateOne(provider , req.body);
-      
-    }else{
-      return resp.json({
-        ok: false,
-        data: null,
-        msg: `We could not find an element with this id(${id})`,
-      });
-    }
-    return resp.json({ ok: true, msg: "Al validations passed" });
 
+    console.log(provider);
+    if (!!provider) {
+      const updatedProvider = await Provider.findByIdAndUpdate(id, req.body, {
+        new: true,
+      });
+      return resp.json({ ok: true, data: updatedProvider });
+    }
+    return resp.status(404).json({
+      ok: true,
+      data: null,
+      msg: `We could not find an element with this id(${id})`,
+    });
   } catch (error) {
     console.log(error);
     resp.status(500).json({
@@ -90,18 +89,19 @@ const updateProvider = async (req = request, resp = response) => {
   }
 };
 
-const deleteProvider = async (req ,resp) => {
+const deleteProvider = async (req, resp) => {
   try {
-    console.log("Borrando");
     const { id } = req.params;
     const provider = (await Provider.findById(id)) || false;
     if (!!provider) {
-      
-      const updateP = await Provider.deleteOne(provider);
-      console.log("Provider deleted");
+      const deleted = await Provider.findByIdAndDelete(id, { new: true });
+      return resp.json({ ok: true, data: deleted });
     }
-
-    return resp.json({ ok: true, msg: "Al validations passed" });
+    return resp.status(404).json({
+      ok: true,
+      data: null,
+      msg: `We could not find the provider with the id ${id}`,
+    });
   } catch (error) {
     console.log(error);
     resp.status(500).json({

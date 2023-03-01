@@ -16,7 +16,7 @@ function applyMiddlewares() {
 
   // Routes
   app.use("/api/providers", require("./src/routes/provider"));
-  app.use("/api/client", require("./src/routes/client"));
+  app.use("/api/clients", require("./src/routes/client"));
   app.listen(process.env.PORT || 4000, () => {
     console.log(`Server runnig on port: ${process.env.PORT || 4000}`);
   });
